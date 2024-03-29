@@ -13,7 +13,7 @@ library(units)
 View(available_layers())
 
 BEC_MAP<-bec()
-mapview(BEC_MAP)
+# mapview(BEC_MAP)
 
 
 park_search_results <- bcdc_search("BC Parks Ecological Reserves Protected Areas")
@@ -30,6 +30,16 @@ BEC_Inside_LacDuBois<- st_intersection(BEC_MAP, LacDuBois)
 
 mapview(BEC_Inside_LacDuBois)
 view(BEC_Inside_LacDuBois)
+
+
+## What you did above works, however it's a bit more concise to use the 
+## bcdc_query_geodata() function and then provide filters before downloading data; 
+## this prevents you needing to download the whole dataset to your PC as it will
+## do some filtering on their servers before it sends you the filtered dataset.
+
+#########
+## 4/4 ##
+#########
 
 #####Calculate the total area in hectares for all 9 BEC zones within the Lac Du Bois Grasslands#####
 
@@ -48,6 +58,9 @@ BEC_Zone_Area_Summary <- BEC_Inside_LacDuBois %>%
   summarise(Total_Area_Ha = sum(area_ha))
 view(BEC_Zone_Area_Summary)
 
+#########
+## 2/2 ##
+#########
 
 #####BEC Zones by colour in Lac Du Bois#####
 
@@ -64,6 +77,9 @@ ggplot(BEC_Inside_LacDuBois, aes(x = BEC_Zones, y = area_ha, fill = BEC_Zones)) 
   theme(plot.title = element_text(size = 10, face = "bold"))+
   guides(fill = guide_legend(title = "BEC Zones"))
 
+#########
+## 5/5 ##
+#########
 
 #####Creating a dem of the Lac Du Bois Grasslands and creating a map coloured by BEC zone#####
 LacDuBois_dem <- cded_terra(BEC_Inside_LacDuBois)
@@ -85,6 +101,10 @@ FinalMap<-mapview(BEC_Inside_LacDuBois)+ mapview(LacDuBois_dem_mask)
 BEC_Inside_LacDuBois_vect <- vect(BEC_Inside_LacDuBois)
 
 elev_values <- extract(LacDuBois_dem_mask, BEC_Inside_LacDuBois_vect, fun = mean, na.rm = TRUE)
+
+#########
+## 4/4 ##
+#########
 
 
 if (any(is.na(elev_values))) {elev_values <- elev_values[!is.na(elev_values)]}
@@ -108,3 +128,15 @@ ggplot(BEC_Inside_LacDuBois, aes(fill = mean_elevation$elevation)) +
 #####Colour Lac Du Bois by BEC subzone#####
 Map_Colour_Subzone<-mapview(BEC_Inside_LacDuBois,zcol = "SUBZONE", legend = TRUE)
 print(Map_Colour_Subzone)
+
+#########
+## 2/2 ##
+#########
+
+
+## Total:
+
+###########
+## 17/17 ##
+###########
+
